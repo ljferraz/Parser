@@ -87,7 +87,7 @@ public class FileParser {
                 try {
                     String[] lineArray = line.toString().split("\\|");
 
-                    if (lineArray.length >= 2) {
+                    if (lineArray.length >= 4) {
                         LocalDateTime dateTime = LocalDateTime.parse(lineArray[0], DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
 
                         AccessLogFileContent accessLogFileContent = new AccessLogFileContent();
