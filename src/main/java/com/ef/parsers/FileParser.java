@@ -1,5 +1,6 @@
 package com.ef.parsers;
 
+import com.ef.models.AccessLogFileContent;
 import com.ef.models.BlockedIps;
 import com.ef.utils.DurationType;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,12 +48,15 @@ public class FileParser {
             linesStream.forEach(line -> {
                 try {
                     String[] lineArray = line.toString().split("\\|");
+
                     if (lineArray.length >= 2) {
                         LocalDateTime dateTime = LocalDateTime.parse(lineArray[0], DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+
                         if ((startDateTime.isBefore(dateTime) || startDateTime.isEqual(dateTime))
                                 && (endDateTime.isAfter(dateTime) || endDateTime.isEqual(dateTime))) {
                             String ip = lineArray[1];
                             BlockedIps blockedIps = accessMap.get(ip);
+
                             if (blockedIps == null) {
                                 blockedIps = BlockedIps.builder().ip(ip).build();
                             }
@@ -71,6 +76,36 @@ public class FileParser {
         blockedIps.forEach(blockedIp -> blockedIp.setComment(String.format("%s blocked because it has more than %s requests from %s to %s", blockedIp.getIp(), threshold, startDateTime, endDateTime)));
 
         return blockedIps;
+    }
+
+    public List<AccessLogFileContent> parseWholeFileContent() throws IOException {
+        File accessLogFile = argumentsExtractor.accessLog();
+        List<AccessLogFileContent> accessLogFileContentList = new ArrayList<>();
+
+        try (Stream linesStream = Files.lines(Paths.get(accessLogFile.toURI()), StandardCharsets.UTF_8)) {
+            linesStream.forEach(line -> {
+                try {
+                    String[] lineArray = line.toString().split("\\|");
+
+                    if (lineArray.length >= 2) {
+                        LocalDateTime dateTime = LocalDateTime.parse(lineArray[0], DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+
+                        AccessLogFileContent accessLogFileContent = new AccessLogFileContent();
+                        accessLogFileContent.setDateTime(dateTime);
+                        accessLogFileContent.setIp(lineArray[1]);
+                        accessLogFileContent.setStatus(lineArray[3]);
+                        accessLogFileContent.setUserAgent(lineArray[4]);
+
+                        accessLogFileContentList.add(accessLogFileContent);
+                    }  else {
+                        log.warn("Invalid line: {}", line);
+                    }
+                } catch (Exception e) {
+                    log.error("Error Parsing line {}", line);
+                }
+            });
+        }
+        return accessLogFileContentList;
     }
 
 }
