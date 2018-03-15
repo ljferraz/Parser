@@ -29,6 +29,6 @@ public class Parser {
         System.out.println("java -jar parser-1.0.jar --accesslog=/path/to/file --startDate=2017-01-01.13:00:00 --duration=daily --threshold=250");
         System.out.println();
         System.out.println("In the case that database connection parameters are not set under application.properties, you can add them on command line arguments. For example:");
-        System.out.println("java -jar parser-1.0.jar --startDate=2017-01-01.00:00:11 --duration=hourly --threshold=100 --accesslog=/path/to/file --spring.datasource.url=jdbc:mysql://Database/parser?useTimezone=true&serverTimezone=UTC --spring.datasource.username=user --spring.datasource.password=password");
+        System.out.println("java -jar parser-1.0.jar --startDate=2017-01-01.00:00:11 --duration=hourly --threshold=100 --accesslog=/path/to/file --spring.datasource.url=jdbc:mysql://Server:Port/DatabaseName?useTimezone=true&serverTimezone=UTC --spring.datasource.username=user --spring.datasource.password=password");
     }
 }
