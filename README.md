@@ -3,7 +3,7 @@
 Spring Boot JPA application which parses an acces log file specified in command line argument (accesslog), saves the whole file content on MySQL Database and also checks
 for blocked ips depending of the number of requests passed in command line argument (threshold).
 
-##Running Application Samples
+## Running Application Samples ##
 
 The tool takes 'accesslog', 'startDate', 'duration' and 'threshold' as command line arguments. 'accesslog' is the log file absolute path, 'startDate' is of 'yyyy-MM-dd.HH:mm:ss' format,
 'duration' can take only 'hourly', 'daily' as inputs and 'threshold' can be an integer.
